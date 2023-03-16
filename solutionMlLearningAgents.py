@@ -35,7 +35,7 @@ from pacman_utils import util
 
 # QLearnAgent
 #
-class QLearnAgent(Agent):
+class QLearnAgentLOL(Agent):
 
     # Constructor, called when we start running the
     def __init__(self, alpha=0.2, epsilon=0.1, gamma=0.8, numTraining=10):

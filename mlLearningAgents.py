@@ -46,9 +46,10 @@ class GameStateFeatures:
         Args:
             state: A given game state object
         """
+        self.legalActions = state.getLegalPacmanActions()
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+    def getLegalActions(self):
+        return self.legalActions
 
 
 class QLearnAgent(Agent):
@@ -79,6 +80,8 @@ class QLearnAgent(Agent):
         self.gamma = float(gamma)
         self.maxAttempts = int(maxAttempts)
         self.numTraining = int(numTraining)
+        self.qDict = util.Counter()
+        self.visitationCount = util.Counter()
         # Count the number of games we have played
         self.episodesSoFar = 0
 
@@ -137,8 +140,7 @@ class QLearnAgent(Agent):
         Returns:
             Q(state, action)
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.qDict[(state, action)]
 
     # WARNING: You will be tested on the functionality of this method
     # DO NOT change the function signature
@@ -150,8 +152,9 @@ class QLearnAgent(Agent):
         Returns:
             q_value: the maximum estimated Q-value attainable from the state
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        legalActions = state.getLegalActions()
+        qValues = map(lambda action: self.getQValue(state, action), legalActions)
+        return max(qValues)
 
     # WARNING: You will be tested on the functionality of this method
     # DO NOT change the function signature
@@ -198,10 +201,9 @@ class QLearnAgent(Agent):
             action: Action taken
 
         Returns:
-            Number of times that the action has been taken in a given state
+            Number of times that the action has been takenin a given state
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.visitationCount[(state, action)]
 
     # WARNING: You will be tested on the functionality of this method
     # DO NOT change the function signature
