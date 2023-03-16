@@ -221,8 +221,11 @@ class QLearnAgent(Agent):
         Returns:
             The exploration value
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if counts == 0:
+            return 1.0
+        else:
+            return float(self.epsilon * (utility / counts))
+
 
     # WARNING: You will be tested on the functionality of this method
     # DO NOT change the function signature
@@ -278,3 +281,4 @@ class QLearnAgent(Agent):
             print('%s\n%s' % (msg, '-' * len(msg)))
             self.setAlpha(0)
             self.setEpsilon(0)
+
