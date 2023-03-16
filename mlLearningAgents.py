@@ -253,7 +253,7 @@ class QLearnAgent(Agent):
         return reduce(lambda action, previousAction: action if self.getQValue(state, action) > self.getQValue(state, previousAction) else previousAction, legalActions)
 
     # WARNING: You will be tested on the functionality of this method
-    # DO NOT change the function signature
+        # DO NOT change the function signature
     def getAction(self, state: GameState) -> Directions:
         """
         Choose an action to take to maximise reward while
