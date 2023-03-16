@@ -124,8 +124,7 @@ class QLearnAgent(Agent):
         Returns:
             The reward assigned for the given trajectory
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return endState.getScore() - startState.getScore()
 
     # WARNING: You will be tested on the functionality of this method
     # DO NOT change the function signature
@@ -145,7 +144,7 @@ class QLearnAgent(Agent):
     # WARNING: You will be tested on the functionality of this method
     # DO NOT change the function signature
     def maxQValue(self, state: GameStateFeatures) -> float:
-        """
+        """[self.get_q_table_value(state, action) for action in legalActions]
         Args:
             state: The given state
 
@@ -172,8 +171,8 @@ class QLearnAgent(Agent):
             nextState: the resulting state
             reward: the reward received on this trajectory
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        currentQValue = self.getQValue(state, action)
+        return currentQValue + self.alpha * (reward + self.gamma * self.maxQValue(nextState) - currentQValue)
 
     # WARNING: You will be tested on the functionality of this method
     # DO NOT change the function signature
@@ -187,8 +186,7 @@ class QLearnAgent(Agent):
             state: Starting state
             action: Action taken
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        self.visitationCount[(state, action)] = self.getCount(state, action) + 1
 
     # WARNING: You will be tested on the functionality of this method
     # DO NOT change the function signature
