@@ -305,9 +305,7 @@ class QLearnAgent(Agent):
         self.previousState = state
         self.updateCount(stateFeatures, chosenAction)
 
-        # Now pick what action to take.
-        # The current code shows how to do that but just makes the choice randomly.
-        return random.choice(legal)
+        return chosenAction
 
     def final(self, state: GameState):
         """
