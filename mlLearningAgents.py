@@ -146,7 +146,6 @@ class QLearnAgent(Agent):
         Returns:
             Q(state, action)
         """
-
         return self.qDict[(state, action)]
 
     # WARNING: You will be tested on the functionality of this method
@@ -179,7 +178,6 @@ class QLearnAgent(Agent):
             nextState: the resulting state
             reward: the reward received on this trajectory
         """
-        print('loooool', action)
         currentQValue = self.getQValue(state, action)
         return currentQValue + self.alpha * (reward + self.gamma * self.maxQValue(nextState) - currentQValue)
 
@@ -231,9 +229,12 @@ class QLearnAgent(Agent):
             The exploration value
         """
         if counts == 0:
-            return 1.0
+            return abs(utility)
         else:
-            return self.epsilon * (utility / counts)
+            if utility > 0:
+                return abs(utility/counts)
+            else:
+                return abs(utility**8/counts)
 
     def getBestExplorationAction(self, state: GameStateFeatures):
         bestAction = None
@@ -250,10 +251,12 @@ class QLearnAgent(Agent):
 
     def getBestExploitationAction(self, state: GameStateFeatures) -> Directions:
         legalActions = state.getLegalActions()
-        return reduce(lambda action, previousAction: action if self.getQValue(state, action) > self.getQValue(state, previousAction) else previousAction, legalActions)
+        return reduce(lambda action, previousAction: action if self.getQValue(state, action) > self.getQValue(state,
+                                                                                                              previousAction) else previousAction,
+                      legalActions)
 
     # WARNING: You will be tested on the functionality of this method
-        # DO NOT change the function signature
+    # DO NOT change the function signature
     def getAction(self, state: GameState) -> Directions:
         """
         Choose an action to take to maximise reward while
@@ -276,35 +279,23 @@ class QLearnAgent(Agent):
         stateFeatures = GameStateFeatures(state)
 
         if self.previousState:
-            # CHOOSE ACTION
-            if random.random() <= self.epsilon:
-                # Based on max ExplorationFn value
-                chosenAction = self.getBestExplorationAction(stateFeatures)
-                print('explore: ', chosenAction)
-            else:
-                # Based on max Q value
-                chosenAction = self.getBestExploitationAction(stateFeatures)
-                print('exploit: ', chosenAction)
-
             # LEARN
             current_reward = self.computeReward(self.previousState, state)
             stateFeatures = GameStateFeatures(state)
             previousStateFeatures = GameStateFeatures(self.previousState)
-            self.learn(previousStateFeatures, chosenAction, current_reward, stateFeatures)
+            self.learn(previousStateFeatures, self.previousAction, current_reward, stateFeatures)
+
+        if random.random() <= self.epsilon:
+            # Based on max ExplorationFn value
+            chosenAction = self.getBestExplorationAction(stateFeatures)
+            # chosenAction = random.choice(legal)
         else:
-            chosenAction = random.choice(legal)
-        
-        # # logging to help you understand the inputs, feel free to remove
-        # print("Legal moves: ", legal)
-        # print("Pacman position: ", state.getPacmanPosition())
-        # print("Ghost positions:", state.getGhostPositions())
-        # print("Food locations: ")
-        # print(state.getFood())
-        # print("Score: ", state.getScore())
+            # Based on max Q value
+            chosenAction = self.getBestExploitationAction(stateFeatures)
 
         self.previousState = state
+        self.previousAction = chosenAction
         self.updateCount(stateFeatures, chosenAction)
-
         return chosenAction
 
     def final(self, state: GameState):
