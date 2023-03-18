@@ -253,7 +253,7 @@ class QLearnAgent(Agent):
         """
         if counts == 0:
             return abs(utility)
-        else: # Here we are trying
+        else:  # Here we are trying to avoid a scenario where pacman doesn't avoid the ghost.
             if utility > 0:
                 return abs(utility/counts)
             else:
