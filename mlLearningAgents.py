@@ -27,6 +27,9 @@ from __future__ import print_function
 
 import random
 
+import numpy as np
+from math import sqrt
+
 from pacman import Directions, GameState
 from pacman_utils.game import Agent
 from pacman_utils import util
@@ -147,10 +150,7 @@ class QLearnAgent(Agent):
         Returns:
             The reward assigned for the given trajectory
         """
-        if startState:
-            return endState.getScore() - startState.getScore()
-        else:
-            return endState.getScore()
+        return endState.getScore() - startState.getScore()
 
     # WARNING: You will be tested on the functionality of this method
     # DO NOT change the function signature
