@@ -71,6 +71,7 @@ class GameStateFeatures:
     def __repr__(self):
         return str(self.state.data)
 
+
 class QLearnAgent(Agent):
 
     def __init__(self,
@@ -105,6 +106,7 @@ class QLearnAgent(Agent):
         self.previousPreviousState = None
         self.previousAction = None
         self.episodesSoFar = 0
+        self.totalActionCount = 0
 
     # Accessor functions for the variable episodesSoFar controlling learning
     def incrementEpisodesSoFar(self):
@@ -255,9 +257,9 @@ class QLearnAgent(Agent):
             return abs(utility)
         else:  # Here we are trying to avoid a scenario where pacman doesn't avoid the ghost.
             if utility > 0:
-                return abs(utility/counts)
+                return abs(utility / counts)
             else:
-                return abs(utility**8/counts)
+                return abs(utility ** 8 / counts)
 
     def getBestExplorationAction(self, state: GameStateFeatures):
         bestAction = Directions.STOP
@@ -270,6 +272,20 @@ class QLearnAgent(Agent):
                 bestAction = action
                 maxExplorationValue = explorationValue
         return bestAction
+
+    # def getMonkeyMove(self, state: GameStateFeatures, action: Directions):
+    #     ghost = state.state.getGhostPositions()[0]
+    #     pos = state.state.getPacmanPosition()
+    #     result = list(pos)
+    #     if action == Directions.EAST:
+    #         result[0] += 1
+    #     elif action == Directions.WEST:
+    #         result[0] -= 1
+    #     elif action == Directions.NORTH:
+    #         result[1] += 1
+    #     elif action == Directions.SOUTH:
+    #         result[1] -= 1
+    #     return tuple(result) == ghost
 
     def getBestExploitationAction(self, state: GameStateFeatures) -> Directions:
         legalActions = state.getLegalActions()
@@ -303,18 +319,17 @@ class QLearnAgent(Agent):
         if self.previousState:
             # LEARN
             current_reward = self.computeReward(self.previousState, state)
-            stateFeatures = GameStateFeatures(state)
             previousStateFeatures = GameStateFeatures(self.previousState)
             self.learn(previousStateFeatures, self.previousAction, current_reward, stateFeatures)
 
         if random.random() <= self.epsilon:
             # Based on max ExplorationFn value
-            chosenAction = self.getBestExplorationAction(stateFeatures)
-            # chosenAction = random.choice(legal)
+            # chosenAction = self.getBestExplorationAction(stateFeatures)
+            chosenAction = random.choice(legal)
         else:
             # Based on max Q value
             chosenAction = self.getBestExploitationAction(stateFeatures)
-
+        self.totalActionCount += 1
         self.previousPreviousState = self.previousState
         self.previousState = state
         self.previousAction = chosenAction
@@ -329,7 +344,7 @@ class QLearnAgent(Agent):
         Args:
             state: the final game state
         """
-        print(f"Game {self.getEpisodesSoFar()} just ended!")
+        # print(f"Game {self.getEpisodesSoFar()} just ended!")
         stateFeatures = GameStateFeatures(state)
         previousPreviousState = GameStateFeatures(self.previousPreviousState)
         currentReward = self.computeReward(self.previousPreviousState, state)
@@ -346,6 +361,6 @@ class QLearnAgent(Agent):
         self.incrementEpisodesSoFar()
         if self.getEpisodesSoFar() == self.getNumTraining():
             msg = 'Training Done (turning off epsilon and alpha)'
-            print('%s\n%s' % (msg, '-' * len(msg)))
+            # print('%s\n%s' % (msg, '-' * len(msg)))
             self.setAlpha(0)
             self.setEpsilon(0)
